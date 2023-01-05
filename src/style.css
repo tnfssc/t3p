@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: RedHatDisplay;
+  src: url("/assets/fonts/RedHatDisplayVF.woff2") format("woff2-variations");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: RedHatText;
+  src: url("/assets/fonts/RedHatTextVF.woff2") format("woff2-variations");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: fallback;
+}
+
+:root {
+  font-synthesis: none;
+  text-rendering: auto;
+  text-size-adjust: 100%;
+}
+
+body,
+#app {
+  min-height: 100vh;
+}
+
+body > * {
+  font-family: RedHatText, Inter, Avenir, Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  place-content: center;
+  place-items: center;
+}

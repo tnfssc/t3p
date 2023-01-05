@@ -1,0 +1,13 @@
+node_modules/
+.husky/
+.prettierrc
+.eslintrc
+.stylelintrc
+.dockerignore
+.gitignore
+Dockerfile
+README.md
+coverage/
+dist/
+surreal-data/
+*.log
