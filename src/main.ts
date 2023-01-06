@@ -1,11 +1,7 @@
+import React from "react";
+import { createRoot } from "react-dom/client";
+
 import "./style.css";
+import Root from "./root";
 
-const app = document.createElement("div");
-app.id = "app";
-document.body.appendChild(app);
-
-document.querySelector<HTMLDivElement>("#app")!.innerHTML = /*html */ `
-  <div class="text-4xl">
-    Hi there!
-  </div>
-`;
+createRoot(document.getElementById("root")!).render(React.createElement(Root));
