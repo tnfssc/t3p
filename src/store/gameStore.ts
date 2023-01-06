@@ -9,7 +9,9 @@ export type Cell = {
 export type Player = {
   name: string;
   color: string;
+  bgColor: string;
   score: number;
+  usedValues: number[];
 };
 
 export interface GameStore {
@@ -39,16 +41,21 @@ const makeGrid = (size: number): Cell[][] =>
   );
 
 const makePlayers = (numberOfPlayers: number): Player[] =>
-  Array.from({ length: numberOfPlayers }, (_, index) => ({
-    name: `Player ${index + 1}`,
-    color: `hsl(${(index * 360) / numberOfPlayers}, 100%, 20%)`,
-    score: 0,
-  }));
+  Array.from({ length: numberOfPlayers }, (_, index) => {
+    const hue = (index * 360) / numberOfPlayers + 30;
+    return {
+      name: `Player ${index + 1}`,
+      color: `hsl(${hue}, 100%, 15%)`,
+      bgColor: `hsl(${hue}, 100%, 50%)`,
+      score: 0,
+      usedValues: [],
+    };
+  });
 
 /**@default */
 const numberOfPlayers = 2;
 /**@default */
-const size = 5;
+const size = 4;
 
 export const useGameStore = zustand<GameStore>((set, get) => ({
   grid: {
@@ -64,7 +71,12 @@ export const useGameStore = zustand<GameStore>((set, get) => ({
     set((state) =>
       produce(state, (draft) => {
         const cell = draft.grid.cells[col][row];
-        if (cell.playerIndex === null || (cell.value ?? 0) < value) {
+        if (
+          (cell.playerIndex === null || (cell.value ?? 0) < value) &&
+          !draft.players[draft.turns.current].usedValues.includes(value)
+        ) {
+          if (value > 0)
+            draft.players[draft.turns.current].usedValues.push(value);
           cell.playerIndex = draft.turns.current;
           cell.value = value;
           draft.turns.current = (draft.turns.current + 1) % numberOfPlayers;
@@ -105,6 +117,18 @@ export const useGameStore = zustand<GameStore>((set, get) => ({
         return set((state) =>
           produce(state, (draft) => {
             draft.victory.playerIndex = playerIndex;
+          })
+        );
+
+      if (
+        cells.every((col) => col.every((cell) => cell.value !== null)) &&
+        get().players.every(
+          (player) => player.usedValues.length === get().maxValue
+        )
+      )
+        return set((state) =>
+          produce(state, (draft) => {
+            draft.victory.playerIndex = -1;
           })
         );
     },
