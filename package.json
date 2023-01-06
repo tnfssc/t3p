@@ -12,8 +12,9 @@
     "test": "vitest",
     "coverage": "vitest run --coverage --watch false",
     "stylelint": "stylelint \"**/*.{css,scss}\" --ignore-path .gitignore",
-    "prettier": "prettier --write . --ignore-path .gitignore",
-    "fullcheck": "yarn lint && yarn stylelint && yarn tscheck",
+    "prettier": "prettier . --ignore-path .gitignore",
+    "format": "yarn prettier --write && yarn stylelint --fix && yarn lint --fix",
+    "fullcheck": "yarn prettier --check && yarn lint && yarn stylelint && yarn tscheck",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -37,6 +38,7 @@
     "postcss": "^8.4.18",
     "prettier": "^2.7.1",
     "react": "^18.2.0",
+    "react-contexify": "^6.0.0",
     "react-dom": "^18.2.0",
     "stylelint": "^14.14.0",
     "stylelint-config-prettier": "^9.0.4",

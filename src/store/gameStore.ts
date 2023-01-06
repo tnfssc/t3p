@@ -2,55 +2,122 @@ import zustand from "zustand";
 import { produce } from "immer";
 
 export type Cell = {
-  ownerIndex: number | null;
+  playerIndex: number | null;
   value: number | null;
+};
+
+export type Player = {
+  name: string;
+  color: string;
+  score: number;
 };
 
 export interface GameStore {
   grid: {
-    size: {
-      rows: number;
-      cols: number;
-    };
-    setSize: (rows: number, cols: number) => void;
+    size: number;
     cells: Cell[][];
-    reset: () => void;
   };
+  maxValue: number;
+  players: Player[];
+  turns: {
+    current: number;
+  };
+  play: (row: number, col: number, value?: number) => void;
+  victory: {
+    playerIndex: number | null;
+    check: (row: number, col: number) => void;
+  };
+  reset: (numberOfPlayers?: number, size?: number) => void;
 }
 
-const makeGrid = (rows: number, cols: number): Cell[][] =>
-  Array.from({ length: cols }, () =>
-    Array.from({ length: rows }, () => ({
-      ownerIndex: null,
+const makeGrid = (size: number): Cell[][] =>
+  Array.from({ length: size }, () =>
+    Array.from({ length: size }, () => ({
+      playerIndex: null,
       value: null,
     }))
   );
 
-export const useGameStore = zustand<GameStore>((set) => ({
+const makePlayers = (numberOfPlayers: number): Player[] =>
+  Array.from({ length: numberOfPlayers }, (_, index) => ({
+    name: `Player ${index + 1}`,
+    color: `hsl(${(index * 360) / numberOfPlayers}, 100%, 20%)`,
+    score: 0,
+  }));
+
+/**@default */
+const numberOfPlayers = 2;
+/**@default */
+const size = 5;
+
+export const useGameStore = zustand<GameStore>((set, get) => ({
   grid: {
-    size: {
-      rows: 10,
-      cols: 10,
+    size,
+    cells: makeGrid(size),
+  },
+  maxValue: Math.pow(size - 1, 2),
+  players: makePlayers(numberOfPlayers),
+  turns: {
+    current: 0,
+  },
+  play: (row: number, col: number, value = 0) => {
+    set((state) =>
+      produce(state, (draft) => {
+        const cell = draft.grid.cells[col][row];
+        if (cell.playerIndex === null || (cell.value ?? 0) < value) {
+          cell.playerIndex = draft.turns.current;
+          cell.value = value;
+          draft.turns.current = (draft.turns.current + 1) % numberOfPlayers;
+        }
+      })
+    );
+    get().victory.check(row, col);
+  },
+  victory: {
+    playerIndex: null,
+    check: (row: number, col: number) => {
+      const { cells } = get().grid;
+      const playerIndex = cells[col][row].playerIndex;
+      const size = get().grid.size;
+
+      const checkCells = (cells: Cell[]) =>
+        cells.every((cell) => cell.playerIndex === playerIndex);
+
+      const rowCells = cells[col];
+      const colCells = cells.map((col) => col[row]);
+      if (checkCells(rowCells) || checkCells(colCells))
+        return set((state) =>
+          produce(state, (draft) => {
+            draft.victory.playerIndex = playerIndex;
+          })
+        );
+
+      const diagCells = cells.map((col, i) => col[i]);
+      if (row === col && checkCells(diagCells))
+        return set((state) =>
+          produce(state, (draft) => {
+            draft.victory.playerIndex = playerIndex;
+          })
+        );
+
+      const antiDiagCells = cells.map((col, i) => col[size - i - 1]);
+      if (row === size - col - 1 && checkCells(antiDiagCells))
+        return set((state) =>
+          produce(state, (draft) => {
+            draft.victory.playerIndex = playerIndex;
+          })
+        );
     },
-    setSize: (rows: number, cols: number) => {
-      set((state) =>
-        produce(state, (draft) => {
-          draft.grid.size.rows = rows;
-          draft.grid.size.cols = cols;
-          draft.grid.cells = makeGrid(rows, cols);
-        })
-      );
-    },
-    cells: makeGrid(10, 10),
-    reset: () => {
-      set((state) =>
-        produce(state, (draft) => {
-          draft.grid.cells = makeGrid(
-            draft.grid.size.rows,
-            draft.grid.size.cols
-          );
-        })
-      );
-    },
+  },
+  reset: (numberOfPlayers, size) => {
+    set((state) =>
+      produce(state, (draft) => {
+        draft.grid.size = size ?? draft.grid.size;
+        draft.grid.cells = makeGrid(size ?? draft.grid.size);
+        draft.players = makePlayers(numberOfPlayers ?? draft.players.length);
+        draft.turns.current = 0;
+        draft.victory.playerIndex = null;
+      })
+    );
   },
 }));

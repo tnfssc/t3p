@@ -1,20 +1,35 @@
+import Cell from "@components/Cell";
 import { useGameStore } from "@store/gameStore";
 
 const Home = () => {
-  const state = useGameStore((s) => s.grid);
-  // Render grid
+  const grid = useGameStore((s) => s.grid);
+  const players = useGameStore((s) => s.players);
+  const winner = useGameStore((s) => s.victory.playerIndex);
+  if (winner !== null) {
+    return (
+      <div>
+        <h1>Victory!</h1>
+        <h2>{players[winner].name} won!</h2>
+      </div>
+    );
+  }
   return (
     <div
       className="grid"
-      style={{ gridTemplateColumns: `repeat(${state.size.cols}, 1fr)` }}
+      style={{ gridTemplateColumns: `repeat(${grid.size}, 1fr)` }}
     >
-      {state.cells.map((col, colIndex) => (
+      {grid.cells.map((col, colIndex) => (
         <div key={`col-${colIndex}`}>
-          {col.map((_, rowIndex) => (
-            <div key={`row-${rowIndex}`} className="aspect-square w-10">
-              {colIndex} {rowIndex}
-            </div>
-          ))}
+          {col.map((cell, rowIndex) => {
+            return (
+              <Cell
+                key={`row-${rowIndex}`}
+                cell={cell}
+                rowIndex={rowIndex}
+                colIndex={colIndex}
+              />
+            );
+          })}
         </div>
       ))}
     </div>
