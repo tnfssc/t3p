@@ -29,7 +29,7 @@ export interface GameStore {
     playerIndex: number | null;
     check: (row: number, col: number) => void;
   };
-  reset: (numberOfPlayers?: number, size?: number) => void;
+  reset: (options?: { numberOfPlayers?: number; size?: number }) => void;
 }
 
 const makeGrid = (size: number): Cell[][] =>
@@ -44,7 +44,7 @@ const makePlayers = (numberOfPlayers: number): Player[] =>
   Array.from({ length: numberOfPlayers }, (_, index) => {
     const hue = (index * 360) / numberOfPlayers + 30;
     return {
-      name: `Player ${index + 1}`,
+      name: `P-${index + 1}`,
       color: `hsl(${hue}, 100%, 15%)`,
       bgColor: `hsl(${hue}, 100%, 50%)`,
       score: 0,
@@ -133,7 +133,7 @@ export const useGameStore = zustand<GameStore>((set, get) => ({
         );
     },
   },
-  reset: (numberOfPlayers, size) => {
+  reset: ({ numberOfPlayers, size } = {}) => {
     set((state) =>
       produce(state, (draft) => {
         draft.grid.size = size ?? draft.grid.size;
@@ -141,6 +141,7 @@ export const useGameStore = zustand<GameStore>((set, get) => ({
         draft.players = makePlayers(numberOfPlayers ?? draft.players.length);
         draft.turns.current = 0;
         draft.victory.playerIndex = null;
+        draft.maxValue = Math.pow(draft.grid.size - 1, 2);
       })
     );
   },

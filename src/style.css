@@ -31,8 +31,8 @@ body,
 
 body * {
   font-family: RedHatText, Inter, Avenir, Helvetica, Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  place-content: center;
-  place-items: center;
+}
+
+.flex-center {
+  @apply flex flex-col place-items-center place-content-center;
 }

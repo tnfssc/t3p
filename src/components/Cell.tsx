@@ -1,7 +1,6 @@
-import { Cell, useGameStore } from "@store/gameStore";
 import clsx from "clsx";
 import { Menu, Item, useContextMenu } from "react-contexify";
-import "react-contexify/ReactContexify.css";
+import { Cell, useGameStore } from "@store/gameStore";
 
 export interface CellProps {
   cell: Cell;
@@ -25,24 +24,24 @@ const Cell: React.FC<CellProps> = ({ cell, rowIndex, colIndex }) => {
     <>
       <button
         key={`row-${rowIndex}`}
-        className="h-24 w-24 m-2 btn text-4xl"
+        className="h-16 w-16 m-2 btn text-4xl"
         style={{ backgroundColor, color }}
         onClick={() => play(rowIndex, colIndex)}
         onContextMenu={(e) => show({ event: e })}
       >
-        {cell.value || ""}
+        <div className="flex w-full h-full flex-center">{cell.value || ""}</div>
       </button>
 
       <Menu
         id={menuId}
         theme="dark"
-        className="min-w-0 grid"
+        className="min-w-0 grid place-items-center place-content-center"
         style={{
           gridTemplateColumns: Array.from(
             { length: Math.sqrt(maxValue) },
             () => "auto"
           ).join(" "),
-          transitionDelay: "0ms",
+          minWidth: 0,
         }}
       >
         {Array.from({ length: maxValue }, (_, i) => i + 1).map((value) => {

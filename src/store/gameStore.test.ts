@@ -41,7 +41,7 @@ describe("gameStore default state", () => {
 describe("gameStore play", () => {
   beforeEach(() => {
     const { result } = renderHook(() => useGameStore());
-    act(() => result.current.reset(2, 2));
+    act(() => result.current.reset({ numberOfPlayers: 2, size: 2 }));
   });
 
   it("should play a cell", () => {
@@ -143,13 +143,38 @@ describe("gameStore play", () => {
     act(() => result.current.play(1, 0));
     expect(result.current.victory.playerIndex).toBe(0);
   });
+
+  it("should draw if all cells are played and all values are used up", () => {
+    const { result } = renderHook(() => useGameStore());
+    act(() => {
+      result.current.reset({ size: 3 });
+      result.current.play(0, 0);
+      result.current.play(0, 2);
+      result.current.play(0, 1);
+      result.current.play(1, 0);
+      result.current.play(1, 1);
+      result.current.play(2, 1);
+      result.current.play(1, 2);
+      result.current.play(2, 2);
+      result.current.play(2, 0);
+      result.current.play(0, 0, 1);
+      result.current.play(0, 1, 1);
+      result.current.play(0, 0, 2);
+      result.current.play(0, 1, 2);
+      result.current.play(0, 0, 3);
+      result.current.play(0, 1, 3);
+      result.current.play(0, 0, 4);
+      result.current.play(0, 1, 4);
+    });
+    expect(result.current.victory.playerIndex).toBe(-1);
+  });
 });
 
 describe("gameStore reset", () => {
   it("should reset the game", () => {
     const { result } = renderHook(() => useGameStore());
     act(() => result.current.play(0, 0));
-    act(() => result.current.reset(2, 2));
+    act(() => result.current.reset({ numberOfPlayers: 2, size: 2 }));
     expect(result.current.grid.cells[0][0].playerIndex).toBe(null);
     expect(result.current.grid.cells[0][0].value).toBe(null);
     expect(result.current.turns.current).toBe(0);
@@ -159,7 +184,7 @@ describe("gameStore reset", () => {
   it("should reset the game with a different grid size", () => {
     const { result } = renderHook(() => useGameStore());
     act(() => result.current.play(0, 0));
-    act(() => result.current.reset(3, 3));
+    act(() => result.current.reset({ numberOfPlayers: 3, size: 3 }));
     expect(result.current.grid.cells[0][0].playerIndex).toBe(null);
     expect(result.current.grid.cells[0][0].value).toBe(null);
     expect(result.current.turns.current).toBe(0);
@@ -169,7 +194,7 @@ describe("gameStore reset", () => {
   it("should reset the game with a different number of players", () => {
     const { result } = renderHook(() => useGameStore());
     act(() => result.current.play(0, 0));
-    act(() => result.current.reset(2, 2));
+    act(() => result.current.reset({ numberOfPlayers: 2, size: 2 }));
     expect(result.current.grid.cells[0][0].playerIndex).toBe(null);
     expect(result.current.grid.cells[0][0].value).toBe(null);
     expect(result.current.turns.current).toBe(0);
