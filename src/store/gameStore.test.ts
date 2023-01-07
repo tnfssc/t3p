@@ -8,7 +8,7 @@ describe("gameStore default state", () => {
     const { result } = renderHook(() => useGameStore());
     const { grid } = result.current;
     expect(
-      grid.cells.every((col) =>
+      grid.every((col) =>
         col.every((cell) => cell.playerIndex === null && cell.value === null)
       )
     ).toBe(true);
@@ -47,8 +47,8 @@ describe("gameStore play", () => {
   it("should play a cell", () => {
     const { result } = renderHook(() => useGameStore());
     act(() => result.current.play(0, 0));
-    expect(result.current.grid.cells[0][0].playerIndex).toBe(0);
-    expect(result.current.grid.cells[0][0].value).toBe(0);
+    expect(result.current.grid[0][0].playerIndex).toBe(0);
+    expect(result.current.grid[0][0].value).toBe(0);
     expect(result.current.turns.current).toBe(
       1 % result.current.players.length
     );
@@ -58,8 +58,8 @@ describe("gameStore play", () => {
     const { result } = renderHook(() => useGameStore());
     act(() => result.current.play(0, 0));
     act(() => result.current.play(0, 0));
-    expect(result.current.grid.cells[0][0].playerIndex).toBe(0);
-    expect(result.current.grid.cells[0][0].value).toBe(0);
+    expect(result.current.grid[0][0].playerIndex).toBe(0);
+    expect(result.current.grid[0][0].value).toBe(0);
     expect(result.current.turns.current).toBe(
       1 % result.current.players.length
     );
@@ -70,16 +70,16 @@ describe("gameStore play", () => {
     act(() => result.current.play(0, 0));
     act(() => result.current.play(0, 1));
     act(() => result.current.play(0, 0));
-    expect(result.current.grid.cells[0][0].playerIndex).toBe(0);
-    expect(result.current.grid.cells[0][0].value).toBe(0);
+    expect(result.current.grid[0][0].playerIndex).toBe(0);
+    expect(result.current.grid[0][0].value).toBe(0);
     expect(result.current.turns.current).toBe(0);
   });
 
   it("should play a cell with a value", () => {
     const { result } = renderHook(() => useGameStore());
     act(() => result.current.play(0, 0, 1));
-    expect(result.current.grid.cells[0][0].playerIndex).toBe(0);
-    expect(result.current.grid.cells[0][0].value).toBe(1);
+    expect(result.current.grid[0][0].playerIndex).toBe(0);
+    expect(result.current.grid[0][0].value).toBe(1);
     expect(result.current.turns.current).toBe(
       1 % result.current.players.length
     );
@@ -89,8 +89,8 @@ describe("gameStore play", () => {
     const { result } = renderHook(() => useGameStore());
     act(() => result.current.play(0, 0, 1));
     act(() => result.current.play(0, 0, 2));
-    expect(result.current.grid.cells[0][0].playerIndex).toBe(1);
-    expect(result.current.grid.cells[0][0].value).toBe(2);
+    expect(result.current.grid[0][0].playerIndex).toBe(1);
+    expect(result.current.grid[0][0].value).toBe(2);
     expect(result.current.turns.current).toBe(0);
   });
 
@@ -98,8 +98,8 @@ describe("gameStore play", () => {
     const { result } = renderHook(() => useGameStore());
     act(() => result.current.play(0, 0, 2));
     act(() => result.current.play(0, 0, 1));
-    expect(result.current.grid.cells[0][0].playerIndex).toBe(0);
-    expect(result.current.grid.cells[0][0].value).toBe(2);
+    expect(result.current.grid[0][0].playerIndex).toBe(0);
+    expect(result.current.grid[0][0].value).toBe(2);
     expect(result.current.turns.current).toBe(1);
   });
 
@@ -107,8 +107,8 @@ describe("gameStore play", () => {
     const { result } = renderHook(() => useGameStore());
     act(() => result.current.play(0, 0, 2));
     act(() => result.current.play(0, 0, 2));
-    expect(result.current.grid.cells[0][0].playerIndex).toBe(0);
-    expect(result.current.grid.cells[0][0].value).toBe(2);
+    expect(result.current.grid[0][0].playerIndex).toBe(0);
+    expect(result.current.grid[0][0].value).toBe(2);
     expect(result.current.turns.current).toBe(1);
   });
 
@@ -175,8 +175,8 @@ describe("gameStore reset", () => {
     const { result } = renderHook(() => useGameStore());
     act(() => result.current.play(0, 0));
     act(() => result.current.reset({ numberOfPlayers: 2, size: 2 }));
-    expect(result.current.grid.cells[0][0].playerIndex).toBe(null);
-    expect(result.current.grid.cells[0][0].value).toBe(null);
+    expect(result.current.grid[0][0].playerIndex).toBe(null);
+    expect(result.current.grid[0][0].value).toBe(null);
     expect(result.current.turns.current).toBe(0);
     expect(result.current.victory.playerIndex).toBe(null);
   });
@@ -185,8 +185,8 @@ describe("gameStore reset", () => {
     const { result } = renderHook(() => useGameStore());
     act(() => result.current.play(0, 0));
     act(() => result.current.reset({ numberOfPlayers: 3, size: 3 }));
-    expect(result.current.grid.cells[0][0].playerIndex).toBe(null);
-    expect(result.current.grid.cells[0][0].value).toBe(null);
+    expect(result.current.grid[0][0].playerIndex).toBe(null);
+    expect(result.current.grid[0][0].value).toBe(null);
     expect(result.current.turns.current).toBe(0);
     expect(result.current.victory.playerIndex).toBe(null);
   });
@@ -195,8 +195,8 @@ describe("gameStore reset", () => {
     const { result } = renderHook(() => useGameStore());
     act(() => result.current.play(0, 0));
     act(() => result.current.reset({ numberOfPlayers: 2, size: 2 }));
-    expect(result.current.grid.cells[0][0].playerIndex).toBe(null);
-    expect(result.current.grid.cells[0][0].value).toBe(null);
+    expect(result.current.grid[0][0].playerIndex).toBe(null);
+    expect(result.current.grid[0][0].value).toBe(null);
     expect(result.current.turns.current).toBe(0);
     expect(result.current.victory.playerIndex).toBe(null);
   });

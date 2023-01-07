@@ -5,23 +5,24 @@ import { SlReload } from "react-icons/sl";
 import Dialog from "@components/Dialog";
 import useConfirm from "@components/Confirm";
 import { useGameStore } from "@store/gameStore";
+import { useUiSettingsStore } from "@store/uiSettingsStore";
 
 const Settings = () => {
+  const { cellSize, setCellSize } = useUiSettingsStore();
   const reset = useGameStore((s) => s.reset);
-  const size = useGameStore((s) => s.grid.size);
+  const size = useGameStore((s) => s.grid.length);
   const [newSize, setNewSize] = useState(size);
+  const playerCount = useGameStore((s) => s.players.length);
+  const [newPlayerCount, setNewPlayerCount] = useState(playerCount);
   const [open, setOpen] = useState(false);
   const confirm = useConfirm();
 
   const handleReset = async () => {
-    if (newSize > 8 || newSize < 2) {
-      toast.error("Size must be between 2 and 5");
-      return;
-    }
     try {
       await confirm();
-      reset({ size: newSize });
+      reset({ size: newSize, numberOfPlayers: newPlayerCount });
       setOpen(false);
+      toast.success("Settings applied and game reset");
     } catch (e) {
       setNewSize(size);
     }
@@ -35,7 +36,7 @@ const Settings = () => {
       >
         <MdSettings className="w-full h-full" />
       </button>
-      <Dialog open={open}>
+      <Dialog open={open} translucent>
         <div className="flex flex-row w-full">
           <div className="grow text-4xl">Settings</div>
           <button
@@ -47,6 +48,24 @@ const Settings = () => {
         </div>
         <div className="form-control">
           <label className="label">
+            <span className="label-text">Cell size (visual)</span>
+          </label>
+          <input
+            type="range"
+            min={56}
+            max={192}
+            value={cellSize}
+            className="range range-lg range-accent"
+            step={8}
+            onChange={(e) => {
+              e.preventDefault();
+              setCellSize(e.target.valueAsNumber);
+            }}
+          />
+        </div>
+        <div className="h-4" />
+        <div className="form-control">
+          <label className="label">
             <span className="label-text">Grid size</span>
           </label>
           <input
@@ -56,7 +75,10 @@ const Settings = () => {
             value={newSize}
             className="range range-lg range-accent"
             step={1}
-            onChange={(e) => setNewSize(e.target.valueAsNumber)}
+            onChange={(e) => {
+              e.preventDefault();
+              setNewSize(e.target.valueAsNumber);
+            }}
           />
           <div className="w-full flex justify-between text-sm px-2 pt-2">
             <span>2</span>
@@ -66,6 +88,31 @@ const Settings = () => {
             <span>6</span>
             <span>7</span>
             <span>8</span>
+          </div>
+        </div>
+        <div className="h-4" />
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Player count</span>
+          </label>
+          <input
+            type="range"
+            min={2}
+            max={6}
+            value={newPlayerCount}
+            className="range range-lg range-accent"
+            step={1}
+            onChange={(e) => {
+              e.preventDefault();
+              setNewPlayerCount(e.target.valueAsNumber);
+            }}
+          />
+          <div className="w-full flex justify-between text-sm px-2 pt-2">
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+            <span>6</span>
           </div>
         </div>
         <div className="modal-action">

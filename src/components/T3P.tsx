@@ -1,4 +1,5 @@
 import Helmet from "react-helmet";
+import { MdChevronRight } from "react-icons/md";
 import Cell from "@components/Cell";
 import Dialog from "@components/Dialog";
 import Settings from "@components/Settings";
@@ -8,6 +9,8 @@ const T3P = () => {
   const grid = useGameStore((s) => s.grid);
   const players = useGameStore((s) => s.players);
   const currentPlayer = players[useGameStore((s) => s.turns.current)];
+  const nextPlayer =
+    players[(useGameStore((s) => s.turns.current) + 1) % players.length];
   const winner = useGameStore((s) => s.victory.playerIndex);
   const reset = useGameStore((s) => s.reset);
   return (
@@ -16,20 +19,44 @@ const T3P = () => {
         <title>T3P - {currentPlayer.name}</title>
       </Helmet>
       <div
-        className="w-screen h-screen transition-all duration-300 ease-in-out flex-center"
+        className="w-screen h-screen transition-all duration-300 ease-in-out flex-center overflow-auto"
         style={{ backgroundColor: currentPlayer.color }}
       >
         <div
           className="grid flex-center"
-          style={{ gridTemplateColumns: `repeat(${grid.size}, 1fr)` }}
+          style={{ gridTemplateColumns: `repeat(${grid.length}, 1fr)` }}
         >
           <div className="mb-2 p-2 flex col-span-full w-full">
-            <div className="grow">
-              <span className="text-4xl">{currentPlayer.name}</span>
+            <div className="flex grow place-items-center">
+              <div className="tooltip" data-tip="Current player">
+                <span
+                  className="text-4xl btn btn-ghost font-mono"
+                  style={{
+                    backgroundColor: currentPlayer.bgColor,
+                    color: currentPlayer.color,
+                  }}
+                >
+                  {currentPlayer.name}
+                </span>
+              </div>
+              <MdChevronRight className="h-12 w-12" />
+              <div className="tooltip" data-tip="Next player">
+                <span
+                  className="text-4xl btn btn-ghost font-mono"
+                  style={{
+                    backgroundColor: nextPlayer.bgColor,
+                    color: nextPlayer.color,
+                  }}
+                >
+                  {nextPlayer.name}
+                </span>
+              </div>
             </div>
-            <Settings />
+            <div className="flex place-items-center">
+              <Settings />
+            </div>
           </div>
-          {grid.cells.map((col, colIndex) => (
+          {grid.map((col, colIndex) => (
             <div key={`col-${colIndex}`} className="flex">
               {col.map((cell, rowIndex) => {
                 return (
