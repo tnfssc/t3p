@@ -6,6 +6,7 @@ import Dialog from "@components/Dialog";
 import useConfirm from "@components/Confirm";
 import useGameStore from "@store/gameStore";
 import { useUiSettingsStore } from "@store/uiSettingsStore";
+import { useToggle } from "@hooks/useToggle";
 
 const Settings = () => {
   const { cellSize, setCellSize } = useUiSettingsStore();
@@ -14,14 +15,14 @@ const Settings = () => {
   const [newSize, setNewSize] = useState(size);
   const playerCount = useGameStore((s) => s.players.length);
   const [newPlayerCount, setNewPlayerCount] = useState(playerCount);
-  const [open, setOpen] = useState(false);
+  const [open, toggleOpen] = useToggle(false);
   const confirm = useConfirm();
 
   const handleReset = async () => {
     try {
       await confirm();
       reset({ size: newSize, numberOfPlayers: newPlayerCount });
-      setOpen(false);
+      toggleOpen(false);
       toast.success("Settings applied and game reset");
     } catch (e) {
       setNewSize(size);
@@ -32,16 +33,16 @@ const Settings = () => {
     <>
       <button
         className="btn btn-circle p-3 btn-outline"
-        onClick={() => setOpen(true)}
+        onClick={() => toggleOpen(true)}
       >
         <MdSettings className="w-full h-full" />
       </button>
-      <Dialog open={open} translucent>
+      <Dialog open={open} onClickAway={() => toggleOpen(false)} translucent>
         <div className="flex flex-row w-full">
           <div className="grow text-4xl">Settings</div>
           <button
             className="btn btn-circle p-3 btn-outline"
-            onClick={() => setOpen(false)}
+            onClick={() => toggleOpen(false)}
           >
             <MdClose className="w-full h-full" />
           </button>

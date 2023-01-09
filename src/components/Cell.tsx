@@ -1,6 +1,6 @@
-import clsx from "clsx";
 import { useId } from "react";
-import { Menu, Item, useContextMenu } from "react-contexify";
+import { useContextMenu } from "react-contexify";
+import ContextValues from "@components/ContextValues";
 import useGameStore, { Cell } from "@store/gameStore";
 import { useUiSettingsStore } from "@store/uiSettingsStore";
 
@@ -16,8 +16,6 @@ const Cell: React.FC<CellProps> = ({ cell, rowIndex, colIndex }) => {
   const { show, hideAll } = useContextMenu({ id: menuId });
   const play = useGameStore((s) => s.play);
   const players = useGameStore((s) => s.players);
-  const sqrtMaxValue = useGameStore((s) => s.sqrtMaxValue);
-  const cellValues = useGameStore((s) => s.cellValues[s.turns.current]);
 
   const color =
     cell.playerIndex !== null ? players[cell.playerIndex].color : undefined;
@@ -29,7 +27,10 @@ const Cell: React.FC<CellProps> = ({ cell, rowIndex, colIndex }) => {
         key={`row-${rowIndex}`}
         className="m-2 btn text-4xl"
         style={{ backgroundColor, color, width: cellSize, height: cellSize }}
-        onClick={() => play(rowIndex, colIndex)}
+        onClick={(e) => {
+          if (cell.value === null) play(rowIndex, colIndex);
+          else show({ event: e });
+        }}
         onContextMenu={(e) => {
           e.preventDefault();
           show({ event: e });
@@ -37,47 +38,14 @@ const Cell: React.FC<CellProps> = ({ cell, rowIndex, colIndex }) => {
       >
         <div className="flex w-full h-full flex-center">{cell.value || ""}</div>
       </button>
-
-      <Menu
+      <ContextValues
+        cellValue={cell.value}
         id={menuId}
-        theme="dark"
-        className="flex flex-col"
-        style={{ minWidth: 0 }}
-      >
-        {Array.from({ length: sqrtMaxValue }, (_, i) => i).map((i) => {
-          return (
-            <Item key={i}>
-              {Array.from({ length: sqrtMaxValue }, (_, i) => i + 1).map(
-                (j) => {
-                  const value = i * sqrtMaxValue + j;
-                  const disabled =
-                    !cellValues.includes(value) || (cell.value ?? 0) >= value;
-
-                  const handleClick = () => {
-                    play(rowIndex, colIndex, value);
-                    hideAll();
-                  };
-                  return (
-                    <button
-                      key={value}
-                      className={clsx(
-                        "btn btn-primary btn-square mr-3 last:mr-0",
-                        {
-                          "btn-disabled": disabled,
-                        }
-                      )}
-                      onClick={handleClick}
-                      disabled={disabled}
-                    >
-                      {value}
-                    </button>
-                  );
-                }
-              )}
-            </Item>
-          );
-        })}
-      </Menu>
+        handleClickValue={(value) => {
+          play(rowIndex, colIndex, value);
+          hideAll();
+        }}
+      />
     </>
   );
 };

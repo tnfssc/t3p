@@ -3,9 +3,12 @@ import { MdChevronRight } from "react-icons/md";
 import Cell from "@components/Cell";
 import Dialog from "@components/Dialog";
 import Settings from "@components/Settings";
+import RemainingPlayers from "@components/RemainingPlayers";
 import useGameStore from "@store/gameStore";
+import { useToggle } from "@hooks/useToggle";
 
 const T3P = () => {
+  const [remainingPlayersOpen, toggleRemainingPlayersOpen] = useToggle(false);
   const grid = useGameStore((s) => s.grid);
   const players = useGameStore((s) => s.players);
   const currentPlayer = players[useGameStore((s) => s.turns.current)];
@@ -30,6 +33,7 @@ const T3P = () => {
             <div className="flex grow place-items-center">
               <div className="tooltip" data-tip="Current player">
                 <span
+                  onClick={() => toggleRemainingPlayersOpen(true)}
                   className="text-4xl btn btn-ghost font-mono"
                   style={{
                     backgroundColor: currentPlayer.bgColor,
@@ -42,6 +46,7 @@ const T3P = () => {
               <MdChevronRight className="h-12 w-12" />
               <div className="tooltip" data-tip="Next player">
                 <span
+                  onClick={() => toggleRemainingPlayersOpen(true)}
                   className="text-4xl btn btn-ghost font-mono"
                   style={{
                     backgroundColor: nextPlayer.lost
@@ -93,6 +98,10 @@ const T3P = () => {
           </button>
         </div>
       </Dialog>
+      <RemainingPlayers
+        open={remainingPlayersOpen}
+        onClickAway={() => toggleRemainingPlayersOpen(false)}
+      />
     </>
   );
 };

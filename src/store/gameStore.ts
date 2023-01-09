@@ -28,6 +28,7 @@ export interface GameStore {
     playerIndex: number | null;
     check: (row: number, col: number) => number | null;
   };
+  defaultCellValues: Record<number, number[]>;
   cellValues: Record<number, number[]>;
   reset: (options?: { numberOfPlayers?: number; size?: number }) => void;
 }
@@ -197,6 +198,10 @@ export default zustand<GameStore>()(
           return null;
         },
       },
+      defaultCellValues: makeDefaultCellValues(
+        numberOfPlayers,
+        getSqrtMaxValue(numberOfPlayers, size)
+      ),
       cellValues: makeDefaultCellValues(
         numberOfPlayers,
         getSqrtMaxValue(numberOfPlayers, size)
@@ -215,6 +220,10 @@ export default zustand<GameStore>()(
               size ?? draft.grid.length
             );
             draft.cellValues = makeDefaultCellValues(
+              draft.players.length,
+              draft.sqrtMaxValue
+            );
+            draft.defaultCellValues = makeDefaultCellValues(
               draft.players.length,
               draft.sqrtMaxValue
             );
