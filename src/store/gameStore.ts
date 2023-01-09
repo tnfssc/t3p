@@ -204,7 +204,6 @@ export default zustand<GameStore>()(
       reset: ({ numberOfPlayers, size } = {}) => {
         set((state) =>
           produce(state, (draft) => {
-            draft.grid.length = size ?? draft.grid.length;
             draft.grid = makeGrid(size ?? draft.grid.length);
             draft.players = makePlayers(
               numberOfPlayers ?? draft.players.length
@@ -213,7 +212,7 @@ export default zustand<GameStore>()(
             draft.victory.playerIndex = null;
             draft.sqrtMaxValue = getSqrtMaxValue(
               draft.players.length,
-              size ?? 0
+              size ?? draft.grid.length
             );
             draft.cellValues = makeDefaultCellValues(
               draft.players.length,
