@@ -199,7 +199,7 @@ export default zustand<GameStore>()(
       },
       cellValues: makeDefaultCellValues(
         numberOfPlayers,
-        getSqrtMaxValue(size, numberOfPlayers)
+        getSqrtMaxValue(numberOfPlayers, size)
       ),
       reset: ({ numberOfPlayers, size } = {}) => {
         set((state) =>
