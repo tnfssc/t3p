@@ -1,7 +1,5 @@
 import { Router, Route } from "wouter";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "react-contexify/ReactContexify.css";
 
 import Home from "@pages/index";
 import { ConfirmProvider } from "@components/Confirm";

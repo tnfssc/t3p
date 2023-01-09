@@ -47,11 +47,6 @@ const Cell: React.FC<CellProps> = ({ cell, rowIndex, colIndex }) => {
         {Array.from({ length: sqrtMaxValue }, (_, i) => i).map((i) => {
           return (
             <Item key={i}>
-              <style>
-                {
-                  /* css */ `:root { --contexify-activeItem-bgColor: "transparent"; }`
-                }
-              </style>
               {Array.from({ length: sqrtMaxValue }, (_, i) => i + 1).map(
                 (j) => {
                   const value = i * sqrtMaxValue + j;

@@ -1381,13 +1381,6 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.5.tgz#5f19d2b85a98e9558036f6a3cacc8819420f05cf"
   integrity sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==
 
-"@types/react-confirm@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@types/react-confirm/-/react-confirm-0.1.4.tgz#e618562febf8f6e87a878aa9cec1378ac0d94ccc"
-  integrity sha512-WL24KCSFgH0IkJVUmJuHfogflQpY9TUxS1Tso1AtkP0BgmDrFMZcRvAJ+JHj0BcMBwordyiKhj4f+2OJHDwq+Q==
-  dependencies:
-    "@types/react" "*"
-
 "@types/react-dom@^18.0.0", "@types/react-dom@^18.0.10":
   version "18.0.10"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.0.10.tgz#3b66dec56aa0f16a6cc26da9e9ca96c35c0b4352"

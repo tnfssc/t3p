@@ -174,6 +174,19 @@ describe("gameStore reset", () => {
   it("should reset the game", () => {
     const { result } = renderHook(() => useGameStore());
     act(() => result.current.play(0, 0));
+    act(() => result.current.reset());
+    expect(result.current.grid[0][0].playerIndex).toBe(null);
+    expect(result.current.grid[0][0].value).toBe(null);
+    expect(result.current.cellValues[0].length).toBe(
+      Math.pow(result.current.sqrtMaxValue, 2)
+    );
+    expect(result.current.turns.current).toBe(0);
+    expect(result.current.victory.playerIndex).toBe(null);
+  });
+
+  it("should reset the game", () => {
+    const { result } = renderHook(() => useGameStore());
+    act(() => result.current.play(0, 0));
     act(() => result.current.reset({ numberOfPlayers: 2, size: 2 }));
     expect(result.current.grid[0][0].playerIndex).toBe(null);
     expect(result.current.grid[0][0].value).toBe(null);
