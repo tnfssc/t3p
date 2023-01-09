@@ -1,6 +1,7 @@
 import clsx from "clsx";
+import { useId } from "react";
 import { Menu, Item, useContextMenu } from "react-contexify";
-import { Cell, useGameStore } from "@store/gameStore";
+import useGameStore, { Cell } from "@store/gameStore";
 import { useUiSettingsStore } from "@store/uiSettingsStore";
 
 export interface CellProps {
@@ -11,12 +12,12 @@ export interface CellProps {
 
 const Cell: React.FC<CellProps> = ({ cell, rowIndex, colIndex }) => {
   const cellSize = useUiSettingsStore((s) => s.cellSize);
-  const menuId = `context-menu-id-${rowIndex}-${colIndex}`;
+  const menuId = useId();
   const { show, hideAll } = useContextMenu({ id: menuId });
   const play = useGameStore((s) => s.play);
   const players = useGameStore((s) => s.players);
   const sqrtMaxValue = useGameStore((s) => s.sqrtMaxValue);
-  const currentPlayer = players[useGameStore((s) => s.turns.current)];
+  const cellValues = useGameStore((s) => s.cellValues[s.turns.current]);
 
   const color =
     cell.playerIndex !== null ? players[cell.playerIndex].color : undefined;
@@ -55,8 +56,7 @@ const Cell: React.FC<CellProps> = ({ cell, rowIndex, colIndex }) => {
                 (j) => {
                   const value = i * sqrtMaxValue + j;
                   const disabled =
-                    currentPlayer.usedValues.includes(value) ||
-                    (cell.value ?? 0) >= value;
+                    !cellValues.includes(value) || (cell.value ?? 0) >= value;
 
                   const handleClick = () => {
                     play(rowIndex, colIndex, value);

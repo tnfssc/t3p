@@ -4,7 +4,7 @@ import { MdSettings, MdClose } from "react-icons/md";
 import { SlReload } from "react-icons/sl";
 import Dialog from "@components/Dialog";
 import useConfirm from "@components/Confirm";
-import { useGameStore } from "@store/gameStore";
+import useGameStore from "@store/gameStore";
 import { useUiSettingsStore } from "@store/uiSettingsStore";
 
 const Settings = () => {

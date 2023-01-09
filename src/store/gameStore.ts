@@ -1,4 +1,5 @@
 import zustand from "zustand";
+import { devtools } from "zustand/middleware";
 import { produce } from "immer";
 
 export type Cell = {
@@ -11,7 +12,7 @@ export type Player = {
   color: string;
   bgColor: string;
   score: number;
-  usedValues: number[];
+  lost: boolean;
 };
 
 export interface GameStore {
@@ -20,12 +21,14 @@ export interface GameStore {
   players: Player[];
   turns: {
     current: number;
+    next: () => void;
   };
   play: (row: number, col: number, value?: number) => void;
   victory: {
     playerIndex: number | null;
-    check: (row: number, col: number) => void;
+    check: (row: number, col: number) => number | null;
   };
+  cellValues: Record<number, number[]>;
   reset: (options?: { numberOfPlayers?: number; size?: number }) => void;
 }
 
@@ -45,100 +48,181 @@ const makePlayers = (numberOfPlayers: number): Player[] =>
       color: `hsl(${hue}, 100%, 15%)`,
       bgColor: `hsl(${hue}, 100%, 50%)`,
       score: 0,
-      usedValues: [],
+      lost: false,
     };
   });
+
+const makeDefaultCellValues = (numberOfPlayers: number, sqrtMaxValue: number) =>
+  Array.from({ length: numberOfPlayers }, (_, i) => i + 1).reduce(
+    (acc, _, index) => ({
+      ...acc,
+      [index]: Array.from(
+        { length: Math.pow(sqrtMaxValue, 2) },
+        (_, i) => i + 1
+      ),
+    }),
+    {} as Record<number, number[]>
+  );
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getSqrtMaxValue = (_numberOfPlayers: number, size: number) => size - 1;
 
 /**@default */
 const numberOfPlayers = 2;
 /**@default */
 const size = 4;
 
-export const useGameStore = zustand<GameStore>((set, get) => ({
-  grid: makeGrid(size),
-  sqrtMaxValue: size - 2,
-  players: makePlayers(numberOfPlayers),
-  turns: {
-    current: 0,
-  },
-  play: (row: number, col: number, value = 0) => {
-    set((state) =>
-      produce(state, (draft) => {
-        const cell = draft.grid[col][row];
-        if (
-          (cell.playerIndex === null || (cell.value ?? 0) < value) &&
-          !draft.players[draft.turns.current].usedValues.includes(value)
-        ) {
-          if (value > 0)
-            draft.players[draft.turns.current].usedValues.push(value);
-          cell.playerIndex = draft.turns.current;
-          cell.value = value;
-          draft.turns.current =
-            (draft.turns.current + 1) % get().players.length;
-        }
-      })
-    );
-    get().victory.check(row, col);
-  },
-  victory: {
-    playerIndex: null,
-    check: (row: number, col: number) => {
-      const grid = get().grid;
-      const playerIndex = grid[col][row].playerIndex;
-      const size = grid.length;
-
-      const checkCells = (cells: Cell[]) =>
-        cells.every((cell) => cell.playerIndex === playerIndex);
-
-      const rowCells = grid[col];
-      const colCells = grid.map((col) => col[row]);
-      if (checkCells(rowCells) || checkCells(colCells))
-        return set((state) =>
+export default zustand<GameStore>()(
+  devtools(
+    (set, get) => ({
+      grid: makeGrid(size),
+      sqrtMaxValue: getSqrtMaxValue(numberOfPlayers, size),
+      players: makePlayers(numberOfPlayers),
+      turns: {
+        current: 0,
+        next: () => {
+          let lost = false;
+          set((state) =>
+            produce(state, (draft) => {
+              draft.turns.current =
+                (draft.turns.current + 1) % get().players.length;
+              const areAllCellsOccupied = draft.grid.every((col) =>
+                col.every((cell) => cell.value !== null)
+              );
+              const areAllValuesUsedUp =
+                draft.cellValues[draft.turns.current].length === 0;
+              if (areAllCellsOccupied && areAllValuesUsedUp) {
+                draft.players[draft.turns.current].lost = true;
+                lost = true;
+              }
+            })
+          );
+          if (lost) get().turns.next();
+        },
+      },
+      play: (row: number, col: number, value = 0) => {
+        let validMove = false;
+        set((state) =>
           produce(state, (draft) => {
-            draft.victory.playerIndex = playerIndex;
+            const cell = draft.grid[col][row];
+            const isCellEmpty = cell.playerIndex === null;
+            const isCellValueOverridable = (cell.value ?? 0) < value;
+            if (!isCellEmpty && !isCellValueOverridable) return;
+            const isValueAvailable =
+              value === 0 ||
+              draft.cellValues[draft.turns.current].includes(value);
+            if (isValueAvailable) {
+              cell.playerIndex = draft.turns.current;
+              cell.value = value;
+              draft.cellValues[draft.turns.current] = draft.cellValues[
+                draft.turns.current
+              ].filter((v) => v !== value);
+              validMove = true;
+            }
           })
         );
+        if (get().victory.check(row, col) !== null) return;
+        if (validMove) get().turns.next();
+      },
+      victory: {
+        playerIndex: null,
+        check: (row: number, col: number) => {
+          const players = get().players;
+          const isOnlyOnePlayerLeft =
+            players.filter((p) => !p.lost).length === 1;
+          if (isOnlyOnePlayerLeft) {
+            const playerIndex = players.findIndex((p) => !p.lost);
+            set((state) =>
+              produce(state, (draft) => {
+                draft.victory.playerIndex = playerIndex;
+              })
+            );
+            return playerIndex;
+          }
+          const grid = get().grid;
+          const playerIndex = grid[col][row].playerIndex;
+          const size = grid.length;
 
-      const diagCells = grid.map((col, i) => col[i]);
-      if (row === col && checkCells(diagCells))
-        return set((state) =>
+          const checkCells = (cells: Cell[]) =>
+            cells.every((cell) => cell.playerIndex === playerIndex);
+
+          const rowCells = grid[col];
+          const colCells = grid.map((col) => col[row]);
+          if (checkCells(rowCells) || checkCells(colCells)) {
+            set((state) =>
+              produce(state, (draft) => {
+                draft.victory.playerIndex = playerIndex;
+              })
+            );
+            return playerIndex;
+          }
+
+          const diagCells = grid.map((col, i) => col[i]);
+          if (row === col && checkCells(diagCells)) {
+            set((state) =>
+              produce(state, (draft) => {
+                draft.victory.playerIndex = playerIndex;
+              })
+            );
+            return playerIndex;
+          }
+
+          const antiDiagCells = grid.map((col, i) => col[size - i - 1]);
+          if (row === size - col - 1 && checkCells(antiDiagCells)) {
+            set((state) =>
+              produce(state, (draft) => {
+                draft.victory.playerIndex = playerIndex;
+              })
+            );
+            return null;
+          }
+
+          const areAllCellsOccupied = grid.every((col) =>
+            col.every((cell) => cell.value !== null)
+          );
+          const cellValues = get().cellValues;
+          const areAllValuesUsedUp = Object.values(cellValues).every(
+            (values) => values.length === 0
+          );
+
+          if (areAllCellsOccupied && areAllValuesUsedUp) {
+            set((state) =>
+              produce(state, (draft) => {
+                draft.victory.playerIndex = -1;
+              })
+            );
+            return -1;
+          }
+
+          return null;
+        },
+      },
+      cellValues: makeDefaultCellValues(
+        numberOfPlayers,
+        getSqrtMaxValue(size, numberOfPlayers)
+      ),
+      reset: ({ numberOfPlayers, size } = {}) => {
+        set((state) =>
           produce(state, (draft) => {
-            draft.victory.playerIndex = playerIndex;
+            draft.grid.length = size ?? draft.grid.length;
+            draft.grid = makeGrid(size ?? draft.grid.length);
+            draft.players = makePlayers(
+              numberOfPlayers ?? draft.players.length
+            );
+            draft.turns.current = 0;
+            draft.victory.playerIndex = null;
+            draft.sqrtMaxValue = getSqrtMaxValue(
+              draft.players.length,
+              size ?? 0
+            );
+            draft.cellValues = makeDefaultCellValues(
+              draft.players.length,
+              draft.sqrtMaxValue
+            );
           })
         );
-
-      const antiDiagCells = grid.map((col, i) => col[size - i - 1]);
-      if (row === size - col - 1 && checkCells(antiDiagCells))
-        return set((state) =>
-          produce(state, (draft) => {
-            draft.victory.playerIndex = playerIndex;
-          })
-        );
-
-      if (
-        grid.every((col) => col.every((cell) => cell.value !== null)) &&
-        get().players.every(
-          (player) =>
-            player.usedValues.length === Math.pow(get().sqrtMaxValue, 2)
-        )
-      )
-        return set((state) =>
-          produce(state, (draft) => {
-            draft.victory.playerIndex = -1;
-          })
-        );
-    },
-  },
-  reset: ({ numberOfPlayers, size } = {}) => {
-    set((state) =>
-      produce(state, (draft) => {
-        draft.grid.length = size ?? draft.grid.length;
-        draft.grid = makeGrid(size ?? draft.grid.length);
-        draft.players = makePlayers(numberOfPlayers ?? draft.players.length);
-        draft.turns.current = 0;
-        draft.victory.playerIndex = null;
-        draft.sqrtMaxValue = draft.grid.length - 2;
-      })
-    );
-  },
-}));
+      },
+    }),
+    { name: "t3p" }
+  )
+);

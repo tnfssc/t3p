@@ -3,7 +3,7 @@ import { MdChevronRight } from "react-icons/md";
 import Cell from "@components/Cell";
 import Dialog from "@components/Dialog";
 import Settings from "@components/Settings";
-import { useGameStore } from "@store/gameStore";
+import useGameStore from "@store/gameStore";
 
 const T3P = () => {
   const grid = useGameStore((s) => s.grid);
@@ -44,7 +44,9 @@ const T3P = () => {
                 <span
                   className="text-4xl btn btn-ghost font-mono"
                   style={{
-                    backgroundColor: nextPlayer.bgColor,
+                    backgroundColor: nextPlayer.lost
+                      ? "#000"
+                      : nextPlayer.bgColor,
                     color: nextPlayer.color,
                   }}
                 >

@@ -1,7 +1,7 @@
 import { describe, expect, beforeEach, it } from "vitest";
 import { renderHook, act } from "@utils/test-utils";
 
-import { useGameStore } from "@store/gameStore";
+import useGameStore from "@store/gameStore";
 
 describe("gameStore default state", () => {
   it("should show all cells empty", () => {
@@ -85,30 +85,30 @@ describe("gameStore play", () => {
     );
   });
 
-  it("should override a cell with a bigger value", () => {
+  it("should override a cell with a bigger value", async () => {
     const { result } = renderHook(() => useGameStore());
+    act(() => result.current.play(0, 0, 0));
     act(() => result.current.play(0, 0, 1));
-    act(() => result.current.play(0, 0, 2));
     expect(result.current.grid[0][0].playerIndex).toBe(1);
-    expect(result.current.grid[0][0].value).toBe(2);
+    expect(result.current.grid[0][0].value).toBe(1);
     expect(result.current.turns.current).toBe(0);
   });
 
   it("should not override a cell with a smaller value", () => {
     const { result } = renderHook(() => useGameStore());
-    act(() => result.current.play(0, 0, 2));
     act(() => result.current.play(0, 0, 1));
+    act(() => result.current.play(0, 0, 0));
     expect(result.current.grid[0][0].playerIndex).toBe(0);
-    expect(result.current.grid[0][0].value).toBe(2);
+    expect(result.current.grid[0][0].value).toBe(1);
     expect(result.current.turns.current).toBe(1);
   });
 
   it("should not override a cell with the same value", () => {
     const { result } = renderHook(() => useGameStore());
-    act(() => result.current.play(0, 0, 2));
-    act(() => result.current.play(0, 0, 2));
+    act(() => result.current.play(0, 0, 1));
+    act(() => result.current.play(0, 0, 1));
     expect(result.current.grid[0][0].playerIndex).toBe(0);
-    expect(result.current.grid[0][0].value).toBe(2);
+    expect(result.current.grid[0][0].value).toBe(1);
     expect(result.current.turns.current).toBe(1);
   });
 
