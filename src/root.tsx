@@ -11,6 +11,7 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import Home from "@pages";
 import LoginPage from "@pages/login";
+import AuthCallback from "@pages/login/callback";
 import { ConfirmProvider } from "@components/Confirm";
 import CircularProgress from "@components/CircularProgress";
 
@@ -42,6 +43,7 @@ const Root = () => {
             <Router>
               <Route path="/" component={Home} />
               <Route path="/login" component={LoginPage} />
+              <Route path="/login/callback" component={AuthCallback} />
             </Router>
             <ToastContainer hideProgressBar theme="colored" />
           </ConfirmProvider>
