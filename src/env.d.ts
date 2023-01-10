@@ -1,8 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_EXPOSED_ENV: string;
-  readonly UNEXPOSED_ENV: string;
+  readonly VITE_PUBLIC_URL: string;
 }
 
 interface ImportMeta {

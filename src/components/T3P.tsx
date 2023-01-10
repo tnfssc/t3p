@@ -1,4 +1,4 @@
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet";
 import { MdChevronRight } from "react-icons/md";
 import Cell from "@components/Cell";
 import Dialog from "@components/Dialog";
@@ -32,7 +32,7 @@ const T3P = () => {
           <div className="mb-2 p-2 flex col-span-full w-full">
             <div className="flex grow place-items-center">
               <div className="tooltip" data-tip="Current player">
-                <span
+                <button
                   onClick={() => toggleRemainingPlayersOpen(true)}
                   className="text-4xl btn btn-ghost font-mono"
                   style={{
@@ -41,11 +41,11 @@ const T3P = () => {
                   }}
                 >
                   {currentPlayer.name}
-                </span>
+                </button>
               </div>
               <MdChevronRight className="h-12 w-12" />
               <div className="tooltip" data-tip="Next player">
-                <span
+                <button
                   onClick={() => toggleRemainingPlayersOpen(true)}
                   className="text-4xl btn btn-ghost font-mono"
                   style={{
@@ -56,7 +56,7 @@ const T3P = () => {
                   }}
                 >
                   {nextPlayer.name}
-                </span>
+                </button>
               </div>
             </div>
             <div className="flex place-items-center">

@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { clsx } from "clsx";
 
 export interface DialogProps {
   children: React.ReactNode;
@@ -16,6 +16,7 @@ const Dialog: React.FC<DialogProps> = ({
   onClickAway,
 }) => {
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       className={clsx("modal modal-bottom sm:modal-middle", {
         "modal-open": open,
@@ -25,7 +26,15 @@ const Dialog: React.FC<DialogProps> = ({
         e.stopPropagation();
         onClickAway?.();
       }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          e.stopPropagation();
+          onClickAway?.();
+        }
+      }}
     >
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
         className="modal-box"
         style={{

@@ -1,1 +1,2 @@
-export const ExposedEnv = import.meta.env.VITE_EXPOSED_ENV;
+export const publicUrl = import.meta.env.VITE_PUBLIC_URL;
+export const authCallbackUrl = `${publicUrl}/login/callback`;

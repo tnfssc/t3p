@@ -16,6 +16,7 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
+    "baseUrl": ".",
     "paths": {
       "@pages/*": ["./src/pages/*"],
       "@constants/*": ["./src/constants/*"],
@@ -23,6 +24,14 @@
       "@hooks/*": ["./src/hooks/*"],
       "@utils/*": ["./src/utils/*"],
       "@store/*": ["./src/store/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@pages": ["./src/pages"],
+      "@constants": ["./src/constants"],
+      "@components": ["./src/components"],
+      "@hooks": ["./src/hooks"],
+      "@utils": ["./src/utils"],
+      "@store": ["./src/store"],
+      "@lib": ["./src/lib"],
       "@/*": ["./src/*"]
     }
   },

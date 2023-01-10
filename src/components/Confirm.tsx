@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { clsx } from "clsx";
 import React, { createContext, useContext, useState } from "react";
 
 export interface ConfirmContext {

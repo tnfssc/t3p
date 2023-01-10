@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { toast } from "react-toastify";
 import { MdSettings, MdClose } from "react-icons/md";
 import { SlReload } from "react-icons/sl";
@@ -10,6 +10,7 @@ import { useToggle } from "@hooks/useToggle";
 
 const Settings = () => {
   const { cellSize, setCellSize } = useUiSettingsStore();
+  const id = useId();
   const reset = useGameStore((s) => s.reset);
   const size = useGameStore((s) => s.grid.length);
   const [newSize, setNewSize] = useState(size);
@@ -48,10 +49,11 @@ const Settings = () => {
           </button>
         </div>
         <div className="form-control">
-          <label className="label">
+          <label className="label" htmlFor={`cell-size-${id}`}>
             <span className="label-text">Cell size (visual)</span>
           </label>
           <input
+            id={`cell-size-${id}`}
             type="range"
             min={56}
             max={192}
@@ -66,10 +68,11 @@ const Settings = () => {
         </div>
         <div className="h-4" />
         <div className="form-control">
-          <label className="label">
+          <label className="label" htmlFor={`grid-size-${id}`}>
             <span className="label-text">Grid size</span>
           </label>
           <input
+            id={`grid-size-${id}`}
             type="range"
             min={2}
             max={8}
@@ -93,10 +96,11 @@ const Settings = () => {
         </div>
         <div className="h-4" />
         <div className="form-control">
-          <label className="label">
+          <label className="label" htmlFor={`player-count-${id}`}>
             <span className="label-text">Player count</span>
           </label>
           <input
+            id={`player-count-${id}`}
             type="range"
             min={2}
             max={6}

@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { MdClose } from "react-icons/md";
 import Dialog from "@components/Dialog";
 import useGameStore from "@store/gameStore";
