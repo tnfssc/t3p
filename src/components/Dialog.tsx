@@ -16,7 +16,6 @@ const Dialog: React.FC<DialogProps> = ({
   onClickAway,
 }) => {
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       className={clsx("modal modal-bottom sm:modal-middle", {
         "modal-open": open,
@@ -34,7 +33,6 @@ const Dialog: React.FC<DialogProps> = ({
         }
       }}
     >
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
         className="modal-box"
         style={{

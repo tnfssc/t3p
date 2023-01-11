@@ -2,7 +2,7 @@ import { clsx } from "clsx";
 import React, { createContext, useContext, useState } from "react";
 
 export interface ConfirmContext {
-  confirm: () => Promise<void>;
+  confirm: ({ message = "Are you sure?" }?) => Promise<void>;
 }
 
 export const ConfirmContext = createContext<ConfirmContext>({
@@ -15,7 +15,9 @@ export const ConfirmProvider: React.FC<{ children: React.ReactNode }> = ({
   const [open, setOpen] = useState(false);
   const [resolve, setResolve] = useState<() => void>();
   const [reject, setReject] = useState<() => void>();
-  const confirm = async () => {
+  const [message, setMessage] = useState("Are you sure?");
+  const confirm = async ({ message = "Are you sure?" } = {}) => {
+    setMessage(message);
     setOpen(true);
     try {
       await new Promise((resolve, reject) => {
@@ -35,7 +37,7 @@ export const ConfirmProvider: React.FC<{ children: React.ReactNode }> = ({
         })}
       >
         <div className="modal-box" style={{ maxWidth: "360px" }}>
-          <span className="text-4xl">Are you sure?</span>
+          <span className="text-4xl">{message}</span>
           <div className="modal-action">
             <button className="btn btn-warning" onClick={reject}>
               Cancel

@@ -14,6 +14,7 @@ import LoginPage from "@pages/login";
 import AuthCallback from "@pages/login/callback";
 import { ConfirmProvider } from "@components/Confirm";
 import CircularProgress from "@components/CircularProgress";
+import NavFab from "@components/NavFab";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { suspense: true, retry: 0 } },
@@ -41,6 +42,7 @@ const Root = () => {
         <QueryClientProvider client={queryClient}>
           <ConfirmProvider>
             <Router>
+              <NavFab />
               <Route path="/" component={Home} />
               <Route path="/login" component={LoginPage} />
               <Route path="/login/callback" component={AuthCallback} />

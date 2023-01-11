@@ -26,7 +26,6 @@ const ContextValues: React.FC<ContextValuesProps> = ({
       style={{ minWidth: 0 }}
     >
       <Item>
-        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
         <div
           className="grid"
           style={{ gridTemplateColumns: `repeat(${sqrtMaxValue}, 1fr)` }}
