@@ -6,9 +6,10 @@ import { useRef } from "react";
 import { useToggle } from "@hooks";
 import { useAuthStore } from "@store/authStore";
 import LogoutButton from "@components/LogoutButton";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 const NavFab = () => {
+  const [, navigate] = useLocation();
   const [open, toggleOpen] = useToggle(false);
   const menuRef = useRef<HTMLUListElement>(null);
   const { user } = useAuthStore();
@@ -42,7 +43,14 @@ const NavFab = () => {
                 </li>
               ) : (
                 <li>
-                  <Link to="/login" className="btn btn-accent text-white">
+                  <Link
+                    to="/login"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setTimeout(() => navigate("/login"));
+                    }}
+                    className="btn btn-accent text-white"
+                  >
                     Login
                   </Link>
                 </li>
