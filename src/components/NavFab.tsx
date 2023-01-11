@@ -14,14 +14,17 @@ const NavFab = () => {
   const menuRef = useRef<HTMLUListElement>(null);
   const { user } = useAuthStore();
   return (
-    <ClickAwayListener
-      onClickAway={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleOpen(false);
-      }}
-    >
-      <div className="absolute right-4 bottom-4 flex flex-col place-items-end z-10">
+    <ClickAwayListener onClickAway={() => toggleOpen(false)}>
+      <div className="absolute right-4 top-4 flex flex-col place-items-end z-10">
+        <label className="btn btn-circle w-16 h-16 bg-white hover:bg-slate-200 swap swap-rotate">
+          <input
+            type="checkbox"
+            onChange={(e) => toggleOpen(e.target.checked)}
+            checked={open}
+          />
+          <MdMenu className="w-8 h-8 text-black swap-off" />
+          <MdClose className="w-8 h-8 text-black swap-on" />
+        </label>
         <Transition in={open} nodeRef={menuRef} timeout={300}>
           {(state) => (
             <ul
@@ -58,15 +61,6 @@ const NavFab = () => {
             </ul>
           )}
         </Transition>
-        <label className="btn btn-circle w-16 h-16 bg-white hover:bg-slate-200 swap swap-rotate">
-          <input
-            type="checkbox"
-            onChange={(e) => toggleOpen(e.target.checked)}
-            checked={open}
-          />
-          <MdMenu className="w-8 h-8 text-black swap-off" />
-          <MdClose className="w-8 h-8 text-black swap-on" />
-        </label>
       </div>
     </ClickAwayListener>
   );

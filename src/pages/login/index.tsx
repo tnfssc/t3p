@@ -29,18 +29,13 @@ const LoginPage = () => {
       <h1 className="text-4xl mb-4">Login</h1>
       <button
         onClick={handleLogin(googleAuthProvider)}
-        onTouchEnd={handleLogin(googleAuthProvider)}
         className="btn outline-blue-500 outline-4 bg-white text-black normal-case hover:bg-blue-300"
       >
         <FcGoogle className="inline-block w-6 h-6 mr-2" />
         Login with Google
       </button>
       {authProviders?.map((provider) => (
-        <button
-          onClick={handleLogin(provider)}
-          onTouchEnd={handleLogin(googleAuthProvider)}
-          className="btn"
-        >
+        <button onClick={handleLogin(provider)} className="btn">
           Login with {provider.name}
         </button>
       ))}
