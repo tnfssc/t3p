@@ -41,7 +41,7 @@ const NavFab = () => {
               onClick={() => toggleOpen(false)}
             >
               {user ? (
-                <li>
+                <li className="btn-group flex-row">
                   <LogoutButton />
                 </li>
               ) : (
