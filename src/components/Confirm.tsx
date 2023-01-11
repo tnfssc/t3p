@@ -2,7 +2,7 @@ import { clsx } from "clsx";
 import React, { createContext, useContext, useState } from "react";
 
 export interface ConfirmContext {
-  confirm: ({ message = "Are you sure?" }?) => Promise<void>;
+  confirm: (param?: { message?: string }) => Promise<void>;
 }
 
 export const ConfirmContext = createContext<ConfirmContext>({
