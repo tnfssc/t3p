@@ -20,7 +20,7 @@ const NavFab = () => {
         toggleOpen(false);
       }}
     >
-      <div className="absolute right-4 bottom-4 flex flex-col place-items-end">
+      <div className="absolute right-4 bottom-4 flex flex-col place-items-end z-10">
         <Transition in={open} nodeRef={menuRef} timeout={300}>
           {(state) => (
             <ul

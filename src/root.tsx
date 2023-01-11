@@ -15,6 +15,7 @@ import AuthCallback from "@pages/login/callback";
 import { ConfirmProvider } from "@components/Confirm";
 import CircularProgress from "@components/CircularProgress";
 import NavFab from "@components/NavFab";
+import { PageWrapper } from "@components/PageWrapper";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { suspense: true, retry: 0 } },
@@ -25,11 +26,13 @@ const Root = () => {
   return (
     <ErrorBoundary
       onReset={reset}
-      fallbackRender={({ resetErrorBoundary }) => (
+      fallbackRender={() => (
         <div className="flex flex-col">
           <span className="text-4xl mb-8 text-error">There was an error!</span>
           <button
-            onClick={() => resetErrorBoundary()}
+            onClick={() => {
+              window.location.href = "/";
+            }}
             className="btn btn-error text-2xl"
           >
             <SlRefresh className="h-6 w-6 mr-4" />
@@ -43,9 +46,12 @@ const Root = () => {
           <ConfirmProvider>
             <Router>
               <NavFab />
-              <Route path="/" component={Home} />
-              <Route path="/login" component={LoginPage} />
-              <Route path="/login/callback" component={AuthCallback} />
+              <Route path="/" component={PageWrapper(Home)} />
+              <Route path="/login" component={PageWrapper(LoginPage)} />
+              <Route
+                path="/login/callback"
+                component={PageWrapper(AuthCallback)}
+              />
             </Router>
             <ToastContainer hideProgressBar theme="colored" />
           </ConfirmProvider>
