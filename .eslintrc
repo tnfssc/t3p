@@ -20,7 +20,8 @@
     "dist",
     "coverage",
     "tailwind.config.cjs",
-    "postcss.config.cjs"
+    "postcss.config.cjs",
+    "rpc"
   ],
   "settings": {
     "import/parsers": {
