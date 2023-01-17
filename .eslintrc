@@ -21,7 +21,7 @@
     "coverage",
     "tailwind.config.cjs",
     "postcss.config.cjs",
-    "rpc"
+    "src/proto"
   ],
   "settings": {
     "import/parsers": {

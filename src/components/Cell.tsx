@@ -1,11 +1,11 @@
 import { useId } from "react";
 import { useContextMenu } from "react-contexify";
 import ContextValues from "@components/ContextValues";
-import useGameStore, { Cell } from "@store/gameStore";
+import useGameStore, { Cell as ICell } from "@store/gameStore";
 import { useUiSettingsStore } from "@store/uiSettingsStore";
 
 export interface CellProps {
-  cell: Cell;
+  cell: ICell;
   rowIndex: number;
   colIndex: number;
 }

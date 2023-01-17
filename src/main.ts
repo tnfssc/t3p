@@ -8,3 +8,7 @@ import "./style.css";
 import Root from "@/root";
 
 createRoot(document.getElementById("root")!).render(createElement(Root));
+
+import { client } from "@lib/client";
+
+client.getUsers({}).then(console.log);

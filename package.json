@@ -12,13 +12,16 @@
     "test": "vitest",
     "coverage": "vitest run --coverage --watch false",
     "stylelint": "stylelint \"**/*.{css,scss}\" --ignore-path .gitignore",
-    "prettier": "prettier . --ignore-path .gitignore '!rpc'",
+    "prettier": "prettier . --ignore-path .gitignore '!src/proto'",
     "format": "yarn prettier --write && yarn stylelint --fix && yarn lint --fix",
     "fullcheck": "yarn prettier --check && yarn lint && yarn stylelint && yarn tscheck",
-    "protogen": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=rpc t3p-proto/rpc.proto",
+    "protogen": "protoc --ts_out src/proto --ts_opt=long_type_string --proto_path t3p-proto t3p-proto/*.proto",
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@protobuf-ts/plugin": "^2.8.2",
+    "@protobuf-ts/runtime": "^2.8.2",
+    "@protobuf-ts/twirp-transport": "^2.8.2",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/react": "^18.0.26",
