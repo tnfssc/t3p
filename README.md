@@ -1,6 +1,8 @@
 # T3P
 
-This is a starter template for web development
+T3P
+
+## [`protoc` Installation Instructions](https://grpc.io/docs/protoc-installation/)
 
 ## Features
 
